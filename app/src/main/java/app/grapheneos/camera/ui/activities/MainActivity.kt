@@ -203,6 +203,15 @@ open class MainActivity : AppCompatActivity(),
     private lateinit var gLeftDash: View
     private lateinit var gRightDash: View
 
+    private var shouldGyroVibrate = true
+    private var hasGyroVibrated = false
+
+    private val gyroVibHandler = Handler(Looper.getMainLooper())
+    private val gyroVibRunnable = Runnable {
+        vibrateDevice()
+        hasGyroVibrated = true
+    }
+
     val thumbnailLoaderExecutor = Executors.newSingleThreadExecutor()
 
     private val runnable = Runnable {
@@ -1367,6 +1376,8 @@ open class MainActivity : AppCompatActivity(),
 
         private const val SWIPE_THRESHOLD = 100
         private const val SWIPE_VELOCITY_THRESHOLD = 100
+
+        private const val GYRO_VIBE_WAIT_TIME = 250L
     }
 
     override fun onDown(e: MotionEvent): Boolean {
@@ -1557,11 +1568,22 @@ open class MainActivity : AppCompatActivity(),
             if (gCircle.rotation != xAngle) {
                 gCircle.rotation = xAngle
                 gLineZ.rotation = xAngle
-                gAngleTextView.text = getString(R.string.degree_format, abs(xAngle).toInt())
+
+                val absXAngle = abs(xAngle).toInt()
+
+                gAngleTextView.text = getString(R.string.degree_format, absXAngle)
                 if (xAngle == 0f) {
                     setThicknessOfGLines(4)
-                    vibrateDevice()
+                    if (shouldGyroVibrate) {
+                        shouldGyroVibrate = false
+                        hasGyroVibrated = false
+                        handler.postDelayed(gyroVibRunnable, GYRO_VIBE_WAIT_TIME)
+                    }
                 } else {
+                    handler.removeCallbacks(gyroVibRunnable)
+                    if (!hasGyroVibrated || absXAngle > 5) {
+                        shouldGyroVibrate = true
+                    }
                     setThicknessOfGLines(2)
                 }
             }
