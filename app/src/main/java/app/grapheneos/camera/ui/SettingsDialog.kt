@@ -664,12 +664,6 @@ class SettingsDialog(val mActivity: MainActivity) :
         return Recorder.getVideoCapabilities(cameraInfo).getSupportedQualities(DynamicRange.SDR)
     }
 
-    private fun getAvailableVideoFrameRates():  List<Range<Int>>  {
-        val resSet = camConfig.camera?.cameraInfo?.supportedFrameRateRanges ?: Collections.emptySet()
-        // Individual fps -> Ranged fps (sorted by lower value of range and then upper for each lower value)
-        val resList = resSet.sortedWith(compareBy<Range<Int>> { it.lower != it.upper }.thenBy { it.lower }.thenBy { it.upper })
-        return resList
-    }
 
     private fun getAvailableQualityTitles(): List<String> {
         val titles = arrayListOf<String>()
@@ -681,10 +675,10 @@ class SettingsDialog(val mActivity: MainActivity) :
         return titles
     }
 
-    private fun getAvailableFRTitles(): List<String> {
+    private fun getAvailableFrameRateTitles(): List<String> {
         val titles = arrayListOf<String>()
 
-        getAvailableVideoFrameRates().forEach {
+        camConfig.getAvailableVideoFrameRates().forEach {
             titles.add(getTitleForFrameRateRange(it))
         }
 
@@ -742,7 +736,7 @@ class SettingsDialog(val mActivity: MainActivity) :
     fun reloadVideoSettings() {
 
         val qualityTitles = getAvailableQualityTitles()
-        val frameRateTitles = getAvailableFRTitles()
+        val frameRateTitles = getAvailableFrameRateTitles()
 
         videoQualityAdapter = ArrayAdapter<String>(
             mActivity,

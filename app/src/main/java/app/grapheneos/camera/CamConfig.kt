@@ -361,7 +361,7 @@ class CamConfig(private val mActivity: MainActivity) {
                     modePref.getString(videoFrameRateKey, "")!!
                 )
             } else {
-                SettingValues.Default.VIDEO_FRAME_RATE
+                defaultVideoFrameRate
             }
         }
         set(value) {
@@ -381,6 +381,14 @@ class CamConfig(private val mActivity: MainActivity) {
             }
 
             return "${SettingValues.Key.VIDEO_FRAME_RATE}_$pf"
+        }
+
+    val defaultVideoFrameRate : Range<Int>
+        get() {
+            val availableFrameRates = getAvailableVideoFrameRates()
+            if (availableFrameRates.contains(SettingValues.Default.VIDEO_FRAME_RATE))
+                return SettingValues.Default.VIDEO_FRAME_RATE
+            return availableFrameRates[0]
         }
 
     var flashMode: Int
@@ -956,6 +964,19 @@ class CamConfig(private val mActivity: MainActivity) {
         else frontCameraInfo!!
     }
 
+    fun getAvailableVideoFrameRates():  List<Range<Int>>  {
+        val resSet = getCurrentCameraInfo().supportedFrameRateRanges
+
+        // Individual fps -> Ranged fps (sorted by lower value of range and then upper for each lower value)
+        val resList = resSet.sortedWith(compareBy<Range<Int>> { it.lower != it.upper }.thenBy { it.lower }.thenBy { it.upper })
+
+        // If the supportedFrameRateRange list is somehow empty due to device/library implementation
+        // go with the most likely default rate
+        if (resList.isEmpty()) return listOf(SettingValues.Default.VIDEO_FRAME_RATE)
+
+        return resList
+    }
+
     fun toggleCameraSelector() {
 
         // Manually switch to the opposite lens facing
@@ -1060,7 +1081,6 @@ class CamConfig(private val mActivity: MainActivity) {
         if (mActivity.isDestroyed || mActivity.isFinishing) return
 
         cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(lensFacing)
             .addCameraFilter {
                 return@addCameraFilter listOf(
                     if (lensFacing == CameraSelector.LENS_FACING_BACK) {
