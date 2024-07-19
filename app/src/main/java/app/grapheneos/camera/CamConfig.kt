@@ -367,7 +367,7 @@ class CamConfig(private val mActivity: MainActivity) {
                     modePref.getString(videoFrameRateKey, "")!!
                 )
             } else {
-                SettingValues.Default.VIDEO_FRAME_RATE
+                defaultVideoFrameRate
             }
         }
         set(value) {
@@ -387,6 +387,14 @@ class CamConfig(private val mActivity: MainActivity) {
             }
 
             return "${SettingValues.Key.VIDEO_FRAME_RATE}_$pf"
+        }
+
+    val defaultVideoFrameRate : Range<Int>
+        get() {
+            val availableFrameRates = getAvailableVideoFrameRates()
+            if (availableFrameRates.contains(SettingValues.Default.VIDEO_FRAME_RATE))
+                return SettingValues.Default.VIDEO_FRAME_RATE
+            return availableFrameRates[0]
         }
 
     var flashMode: Int
@@ -783,7 +791,7 @@ class CamConfig(private val mActivity: MainActivity) {
             editor.putBoolean(SettingValues.Key.CAMERA_SOUNDS, SettingValues.Default.CAMERA_SOUNDS)
         }
 
-        // Note: This is a workaround to keep save image/video as previewed 'on' by 
+        // Note: This is a workaround to keep save image/video as previewed 'on' by
         // default starting from v73 and 'off' by default for versions before that
         //
         // If its not a fresh install (before v73)
@@ -988,6 +996,19 @@ class CamConfig(private val mActivity: MainActivity) {
     @SuppressLint("RestrictedApi")
     private fun getCurrentCameraInfo() : CameraInfo {
         return cameraProvider!!.getCameraInfo(cameraSelector)
+    }
+
+    fun getAvailableVideoFrameRates():  List<Range<Int>>  {
+        val resSet = getCurrentCameraInfo().supportedFrameRateRanges
+
+        // Individual fps -> Ranged fps (sorted by lower value of range and then upper for each lower value)
+        val resList = resSet.sortedWith(compareBy<Range<Int>> { it.lower != it.upper }.thenBy { it.lower }.thenBy { it.upper })
+
+        // If the supportedFrameRateRange list is somehow empty due to device/library implementation
+        // go with the most likely default rate
+        if (resList.isEmpty()) return listOf(SettingValues.Default.VIDEO_FRAME_RATE)
+
+        return resList
     }
 
     fun toggleCameraSelector() {
