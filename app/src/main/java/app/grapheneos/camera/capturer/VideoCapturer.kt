@@ -192,7 +192,7 @@ class VideoCapturer(private val mActivity: MainActivity) {
 
         val pendingRecording = recordingCtx.pendingRecording
 
-        if (includeAudio) {
+        if (ctx.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PERMISSION_GRANTED) {
             pendingRecording.withAudioEnabled()
         }
 
@@ -249,6 +249,10 @@ class VideoCapturer(private val mActivity: MainActivity) {
                         ctx.afterRecording(uri)
                     }
                 }
+            }
+
+            if (!includeAudio) {
+                muteRecording()
             }
 
             try {
