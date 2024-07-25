@@ -324,31 +324,6 @@ class SettingsDialog(val mActivity: MainActivity) :
 
         includeAudioToggle = binding.includeAudioSwitch
         includeAudioToggle.setOnClickListener {
-            if (mActivity.videoCapturer.isRecording) {
-                if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.RECORD_AUDIO)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                    // Inform the user why enabling this option isn't possible
-                    mActivity.showMessage(context.getString(R.string.audio_permission_failed_in_recording))
-
-                    // Ensure the option is visually off
-                    includeAudioToggle.isChecked = false
-                    return@setOnClickListener
-                }
-
-                if (!mActivity.videoCapturer.includeAudio) {
-                    mActivity.showMessage("Enabling audio while recording is not currently supported when it was disabled at the start")
-                    includeAudioToggle.isChecked = false
-                    return@setOnClickListener
-                }
-
-                if  (includeAudioToggle.isChecked) {
-                    mActivity.videoCapturer.unmuteRecording()
-                } else {
-                    mActivity.videoCapturer.muteRecording()
-                }
-            }
-
             mActivity.micOffIcon.visibility = if (includeAudioToggle.isChecked) {
                 View.GONE
             } else {
