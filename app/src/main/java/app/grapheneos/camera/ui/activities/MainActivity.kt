@@ -203,6 +203,8 @@ open class MainActivity : AppCompatActivity(),
     private lateinit var gLeftDash: View
     private lateinit var gRightDash: View
 
+    lateinit var muteToggle: ShapeableImageView
+
     val thumbnailLoaderExecutor = Executors.newSingleThreadExecutor()
 
     private val runnable = Runnable {
@@ -1008,6 +1010,21 @@ open class MainActivity : AppCompatActivity(),
         gRightDash = binding.gCircleRightDash
 
         gCircleFrame = binding.gCircleFrame
+
+        muteToggle = binding.muteToggle
+        muteToggle.setOnClickListener {
+            if (videoCapturer.isMuted) {
+                videoCapturer.unmuteRecording()
+                muteToggle.setImageResource(R.drawable.mic_on)
+                muteToggle.setBackgroundColor(getColor(R.color.red))
+                muteToggle.tooltipText = getString(R.string.tap_to_mute_audio)
+            } else {
+                videoCapturer.muteRecording()
+                muteToggle.setImageResource(R.drawable.mic_off)
+                muteToggle.setBackgroundColor(getColor(android.R.color.darker_gray))
+                muteToggle.tooltipText = getString(R.string.tap_to_unmute_audio)
+            }
+        }
     }
 
     private fun repositionTabLayout() {
