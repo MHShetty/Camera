@@ -989,15 +989,9 @@ class CamConfig(private val mActivity: MainActivity) {
     }
 
     private fun isLensFacingSupported(lensFacing : Int) : Boolean {
-        var tCameraSelector = CameraSelector.Builder()
+        val tCameraSelector = CameraSelector.Builder()
             .requireLensFacing(lensFacing)
             .build()
-
-        if (currentMode.extensionMode != ExtensionMode.NONE) {
-            extensionsManager?.let { em ->
-                tCameraSelector = em.getExtensionEnabledCameraSelector(tCameraSelector, currentMode.extensionMode)
-            }
-        }
 
         return cameraProvider?.hasCamera(tCameraSelector) ?: false
     }
