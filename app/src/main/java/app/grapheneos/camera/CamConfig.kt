@@ -757,7 +757,7 @@ class CamConfig(private val mActivity: MainActivity) {
             )
         }
 
-        if (!commonPref.contains(SettingValues.Key.SAVE_IMAGE_AS_PREVIEW)) {
+        if (!commonPref.contains(SettingValues.Key.SAVE_VIDEO_AS_PREVIEW)) {
             editor.putBoolean(
                 SettingValues.Key.SAVE_VIDEO_AS_PREVIEW,
                 SettingValues.Default.SAVE_VIDEO_AS_PREVIEW
