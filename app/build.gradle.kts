@@ -11,6 +11,10 @@ if (useKeystoreProperties) {
 plugins {
     id("com.android.application")
     kotlin("android")
+    // The following plugin should have the same version as
+    // org.jetbrains.kotlin.android defined at project level
+    // gradle
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.10"
 }
 
 java {
@@ -82,6 +86,11 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+
+        compose = true
+        composeOptions {
+            kotlinCompilerExtensionVersion = "1.5.15"
+        }
     }
 
     lint {
@@ -104,4 +113,21 @@ dependencies {
     implementation("androidx.camera:camera-extensions:$cameraVersion")
 
     implementation("com.google.zxing:core:3.5.3")
+
+    val composeBom = platform("androidx.compose:compose-bom:2024.08.00")
+    implementation(composeBom)
+    implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    implementation("androidx.compose.ui:ui-tooling-preview")
+
+    implementation("androidx.media3:media3-ui:1.4.0")
+    implementation("androidx.media3:media3-exoplayer:1.4.0")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
+
+    implementation("me.saket.telephoto:zoomable-image-coil:0.13.0")
+
+    implementation("io.coil-kt:coil-video:2.6.0")
+
 }
