@@ -122,7 +122,7 @@
     <string name="cancel">Cancel</string>
     <string name="no_image">Please capture a photo/video before trying to view them.</string>
 
-    <string name="empty_gallery">Captured photos/videos not found</string>
+    <string name="empty_gallery">No captured photos/videos found</string>
 
     <string name="bind_failure">Failed to open camera due to an OS or hardware issue. Try rebooting.</string>
     <string name="camera_provider_init_failure">Failed to load camera provider due to OS or hardware issue. Try rebooting.</string>
