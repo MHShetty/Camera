@@ -2,8 +2,6 @@ package app.grapheneos.camera.ui.composable.screen
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
@@ -141,18 +139,7 @@ fun GalleryScreen(
         deletionItem = itemToBeDeleted,
         onDeleteAction = { item ->
             coroutineScope.launch {
-                var result = false
-
-                val uri = item.uri
-                try {
-                    result = if (uri.authority == MediaStore.AUTHORITY) {
-                        context.contentResolver.delete(uri, null, null) > 0
-                    } else {
-                        DocumentsContract.deleteDocument(context.contentResolver, uri)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+                val result = item.delete(context)
 
                 if (result) {
                     capturedItems.remove(item)
