@@ -44,7 +44,6 @@ import app.grapheneos.camera.ui.composable.components.FileDeletionDialog
 import app.grapheneos.camera.ui.composable.components.GalleryImage
 import app.grapheneos.camera.ui.composable.components.GalleryTopBar
 import app.grapheneos.camera.ui.composable.components.MediaInfoDialog
-import app.grapheneos.camera.ui.composable.components.MediaItemDetails
 import app.grapheneos.camera.ui.theme.AppColor
 import kotlinx.coroutines.launch
 import me.saket.telephoto.zoomable.rememberZoomableState
@@ -52,6 +51,7 @@ import me.saket.telephoto.zoomable.zoomable
 
 import app.grapheneos.camera.ITEM_TYPE_IMAGE
 import app.grapheneos.camera.ITEM_TYPE_VIDEO
+import app.grapheneos.camera.ui.composable.data.MediaItemDetails
 
 private const val TAG = "GalleryScreen"
 
