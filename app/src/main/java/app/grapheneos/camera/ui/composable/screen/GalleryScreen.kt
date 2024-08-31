@@ -160,10 +160,8 @@ fun GalleryScreen(
                     )
                 }
             }
-
-            itemToBeDeleted = null
         },
-        onDismissAction = {
+        dismissHandler = {
             itemToBeDeleted = null
         }
     )

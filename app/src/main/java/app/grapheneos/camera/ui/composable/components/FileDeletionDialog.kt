@@ -28,7 +28,7 @@ import app.grapheneos.camera.ui.theme.AppColor
 fun FileDeletionDialog(
     deletionItem : CapturedItem?,
     onDeleteAction: (item: CapturedItem) -> Unit,
-    onDismissAction: () -> Unit,
+    dismissHandler: () -> Unit,
 
     ) {
     if (deletionItem != null) {
@@ -71,12 +71,13 @@ fun FileDeletionDialog(
                             modifier = Modifier.align(Alignment.End)
                         ) {
                             TextButton(
-                                onClick = onDismissAction) {
+                                onClick = dismissHandler) {
                                 Text("Cancel")
                             }
 
                             TextButton(onClick = {
                                 onDeleteAction(deletionItem)
+                                dismissHandler()
                             }) {
                                 Text("Delete")
                             }
@@ -87,7 +88,7 @@ fun FileDeletionDialog(
                 }
             },
 
-            onDismissRequest = onDismissAction
+            onDismissRequest = dismissHandler
         )
     }
 }
