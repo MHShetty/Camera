@@ -5,41 +5,62 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.absolutePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSizeIn
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
+
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import app.grapheneos.camera.ui.theme.AppColor
+
+enum class GalleryAction {
+    EDIT_MEDIA,
+    DELETE_MEDIA,
+    SHOW_MEDIA_INFO,
+    SHARE_MEDIA,
+    EDIT_MEDIA_WITH_APP,
+}
+
+private val GALLERY_ACTIONS = listOf(
+    TopBarAction(
+        id = GalleryAction.EDIT_MEDIA,
+        title = "Edit Media",
+        icon = Icons.Filled.Edit
+    ),
+    TopBarAction(
+        id = GalleryAction.DELETE_MEDIA,
+        title = "Delete Media",
+        icon = Icons.Filled.Delete
+    ),
+    TopBarAction(
+        id = GalleryAction.SHOW_MEDIA_INFO,
+        title = "Show media info",
+        icon = Icons.Filled.Info
+    ),
+    TopBarAction(
+        id = GalleryAction.SHARE_MEDIA,
+        title = "Share Media",
+        icon = Icons.Filled.Share
+    ),
+    TopBarAction(
+        id = GalleryAction.EDIT_MEDIA_WITH_APP,
+        title = "Edit with",
+        icon = Icons.Filled.Edit,
+        alwaysInMoreOptions = true
+    ),
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,10 +72,6 @@ fun GalleryTopBar(
     onInfoAction: () -> Unit,
     onShareAction: () -> Unit
 ) {
-
-    var dropDownMenuExpanded by remember {
-        mutableStateOf(false)
-    }
 
     AnimatedVisibility(
         visible = visible,
@@ -87,70 +104,33 @@ fun GalleryTopBar(
                     )
                 }
             },
+
             actions = {
-                IconButton(onClick = {
-                    onEditAction(false)
-                }) {
-                    Icon(
-                        Icons.Filled.Edit,
-                        "Edit"
-                    )
-                }
-
-                IconButton(onClick = onDeleteAction) {
-                    Icon(Icons.Filled.Delete, null)
-                }
-
-                IconButton(onClick = onInfoAction) {
-                    Icon(Icons.Filled.Info, null)
-                }
-
-                IconButton(onClick = onShareAction) {
-                    Icon(Icons.Filled.Share, null)
-                }
-
-                Box(
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    IconButton(onClick = {
-                        dropDownMenuExpanded = !dropDownMenuExpanded
-                    }) {
-                        Icon(
-                            Icons.Filled.MoreVert,
-                            "More Options"
-                        )
-                    }
-
-                    DropdownMenu(
-                        expanded = dropDownMenuExpanded,
-                        onDismissRequest = {
-                            dropDownMenuExpanded = false
-                        },
-                        modifier = Modifier.width(200.dp)
-                    ) {
-                        DropdownMenuItem(
-                            contentPadding = PaddingValues(vertical = 0.dp, horizontal = 12.dp),
-                            modifier = Modifier
-                                .requiredSizeIn(maxHeight = 42.dp),
-
-                            text = {
-                                Text(
-                                    text = "Edit With",
-                                    color = Color.White,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal,
-                                    modifier = Modifier
-                                        .padding(0.dp)
-                                )
-                            },
-
-                            onClick = {
+                TopBarActions(
+                    actions = GALLERY_ACTIONS,
+                    onActionClicked = { id ->
+                        when (id) {
+                            GalleryAction.EDIT_MEDIA -> {
+                                onEditAction(false)
+                            }
+                            GalleryAction.DELETE_MEDIA -> {
+                                onDeleteAction()
+                            }
+                            GalleryAction.SHOW_MEDIA_INFO -> {
+                                onInfoAction()
+                            }
+                            GalleryAction.SHARE_MEDIA -> {
+                                onShareAction()
+                            }
+                            GalleryAction.EDIT_MEDIA_WITH_APP -> {
                                 onEditAction(true)
-                                dropDownMenuExpanded = false
-                            },
-                        )
-                    }
-                }
+                            }
+                        }
+                    },
+                    // To avoid overlapping leading back arrow and some spacing
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                )
             },
         )
     }
