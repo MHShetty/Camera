@@ -49,7 +49,7 @@ fun GalleryImage(
         imageLoader = imageLoader,
         modifier = Modifier
             .then(modifier)
-            .padding(top = 56.dp)
+//            .padding(top = 56.dp)
             .fillMaxSize(),
         alignment = Alignment.Center,
         contentDescription = "Video Thumbnail",

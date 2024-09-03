@@ -7,8 +7,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
@@ -27,37 +29,47 @@ fun QuickTooltip(
     content: @Composable () -> Unit,
 ) {
 
+    val hapticFeedback = LocalHapticFeedback.current
+
+    val tooltipState = rememberTooltipState()
+
+    LaunchedEffect(tooltipState.isVisible) {
+        if (tooltipState.isVisible) {
+            hapticFeedback.performHapticFeedback(
+                HapticFeedbackType.LongPress
+            )
+        }
+    }
+
     TooltipBox (
-        positionProvider = remember {
-            object : PopupPositionProvider {
-                override fun calculatePosition(
-                    anchorBounds: IntRect,
-                    windowSize: IntSize,
-                    layoutDirection: LayoutDirection,
-                    popupContentSize: IntSize
-                ): IntOffset {
+        positionProvider = object : PopupPositionProvider {
+            override fun calculatePosition(
+                anchorBounds: IntRect,
+                windowSize: IntSize,
+                layoutDirection: LayoutDirection,
+                popupContentSize: IntSize
+            ): IntOffset {
 
-                    val anchorPopWidthDiff = anchorBounds.width - popupContentSize.width
+                val anchorPopWidthDiff = anchorBounds.width - popupContentSize.width
 
-                    val xOffset = if (anchorPopWidthDiff >= 0) {
-                        anchorBounds.left + anchorPopWidthDiff / 2
-                    } else if (
-                        (windowSize.width - anchorBounds.right >= anchorPopWidthDiff.absoluteValue / 2)
-                    ) {
-                        anchorBounds.left - anchorPopWidthDiff.absoluteValue / 2
-                    } else {
-                        anchorBounds.right - popupContentSize.width
-                    }.toInt()
+                val xOffset = if (anchorPopWidthDiff >= 0) {
+                    anchorBounds.left + anchorPopWidthDiff / 2
+                } else if (
+                    (windowSize.width - anchorBounds.right >= anchorPopWidthDiff.absoluteValue / 2)
+                ) {
+                    anchorBounds.left - anchorPopWidthDiff.absoluteValue / 2
+                } else {
+                    anchorBounds.right - popupContentSize.width
+                }.toInt()
 
-                    // Keep the tooltip below the view
-                    // (for use our case)
-                    //
-                    // Refer the source code of default implementation
-                    // if top based vertical offset is needed
-                    val yOffset = (anchorBounds.bottom + tooltipAnchorVerticalSpacing).toInt()
+                // Keep the tooltip below the view
+                // (for use our case)
+                //
+                // Refer the source code of default implementation
+                // if top based vertical offset is needed
+                val yOffset = (anchorBounds.bottom + tooltipAnchorVerticalSpacing).toInt()
 
-                    return IntOffset(xOffset, yOffset)
-                }
+                return IntOffset(xOffset, yOffset)
             }
         },
         tooltip = {
@@ -74,7 +86,7 @@ fun QuickTooltip(
             }
 
         },
-        state = rememberTooltipState(),
+        state = tooltipState,
         content = content
     )
 }

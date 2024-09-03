@@ -72,6 +72,10 @@ fun GalleryScreen(
 
     val zoomableState = rememberZoomableState()
 
+    var isZoomedIn by remember {
+        mutableStateOf(false)
+    }
+
     var inFocusMode by remember {
         mutableStateOf(false)
     }
@@ -278,7 +282,7 @@ fun GalleryScreen(
 
                 HorizontalPager(
                     state = pagerState,
-                    userScrollEnabled = !inFocusMode,
+                    userScrollEnabled = !isZoomedIn,
                     beyondBoundsPageCount = 1,
                     modifier = Modifier
                         .padding(
@@ -294,36 +298,37 @@ fun GalleryScreen(
                 ) { page ->
                     val capturedItem = capturedItems[page]
 
-                    var modifier: Modifier = Modifier
+                    val modifier: Modifier = if (capturedItem.type == ITEM_TYPE_IMAGE) {
+                        Modifier.zoomable(
+                            zoomableState,
+                            onClick = {
+                                inFocusMode = !inFocusMode
+                            }
+                        )
+                    } else {
+                        Modifier
+                            .clickable(
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ) {
+                                val intent =
+                                    Intent(context, VideoPlayer::class.java)
+                                intent.putExtra(
+                                    VideoPlayer.VIDEO_URI,
+                                    capturedItem.uri
+                                )
+                                intent.putExtra(
+                                    VideoPlayer.IN_SECURE_MODE,
+                                    isSecureMode
+                                )
 
-                    if (capturedItem.type == ITEM_TYPE_IMAGE) {
-                        modifier = modifier.zoomable(zoomableState)
+                                context.startActivity(intent)
+                            }
                     }
 
                     GalleryImage(
                         capturedItem = capturedItem,
                         modifier = modifier
-                            .clickable(
-                                indication = null,
-                                interactionSource = remember { MutableInteractionSource() }
-                            ) {
-                                if (capturedItem.type == ITEM_TYPE_VIDEO) {
-                                    val intent =
-                                        Intent(context, VideoPlayer::class.java)
-                                    intent.putExtra(
-                                        VideoPlayer.VIDEO_URI,
-                                        capturedItem.uri
-                                    )
-                                    intent.putExtra(
-                                        VideoPlayer.IN_SECURE_MODE,
-                                        isSecureMode
-                                    )
-
-                                    context.startActivity(intent)
-                                } else {
-                                    inFocusMode = !inFocusMode
-                                }
-                            }
                             .graphicsLayer {
                                 val pageOffset = pagerState.getOffsetFractionForPage(page)
                                 alpha = 1f - (pageOffset / .5f) * .7f
@@ -331,17 +336,9 @@ fun GalleryScreen(
                     )
 
                     LaunchedEffect(zoomableState.zoomFraction) {
-                        // inFocusMode is a state variable, therefore check value before updating it repeatedly
                         zoomableState.zoomFraction?.let { zoomFraction ->
-                            if (zoomFraction >= 0.01f) {
-                                if (!inFocusMode) {
-                                    inFocusMode = true
-                                }
-                            } else {
-                                if (inFocusMode) {
-                                    inFocusMode = false
-                                }
-                            }
+                            isZoomedIn = zoomFraction >= 0.01f
+                            inFocusMode = zoomFraction >= 0.01f
                         }
                     }
                 }
@@ -349,3 +346,4 @@ fun GalleryScreen(
         )
     }
 }
+

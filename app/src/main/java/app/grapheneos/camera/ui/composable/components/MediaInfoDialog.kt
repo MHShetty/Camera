@@ -1,22 +1,28 @@
 package app.grapheneos.camera.ui.composable.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 
+import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.padding
+
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ProvideTextStyle
+
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,39 +41,35 @@ fun MediaInfoDialog(
             onDismissRequest = onFinish,
 
             content = @Composable {
-                ProvideTextStyle(value = TextStyle(
-                    color = Color(0xFFEEEEEE)
-                )
+                Column(
+                    modifier = Modifier
+                        .background(
+                            shape = RoundedCornerShape(24.dp),
+                            color = AppColor.BackgroundColor,
+                        )
+                        .padding(
+                            start = 24.dp,
+                            top = 20.dp,
+                            bottom = 8.dp
+                        )
                 ) {
-                    Column(
+                    Text(
+                        text = stringResource(R.string.file_details),
+                        fontWeight = FontWeight.Medium,
+                        color = Color.White,
+                        fontSize = 20.sp,
                         modifier = Modifier
-                            .background(
-                                shape = RoundedCornerShape(24.dp),
-                                color = AppColor.BackgroundColor,
-                            )
-                            .padding(
-                                start = 24.dp,
-                                end = 24.dp,
-                                top = 20.dp,
-                                bottom = 8.dp
-                            )
+                            .padding(bottom = 24.dp)
+                    )
+
+                    Row (
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = stringResource(R.string.file_details),
-                            fontWeight = FontWeight.Medium,
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            modifier = Modifier
-                                .padding(bottom = 24.dp)
-                        )
-
-                        Box (
-                            modifier = Modifier
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                fontSize = 16.sp,
-                                text = """
+                            fontSize = 16.sp,
+                            color = Color(0xFFEEEEEE),
+                            text = """
                                 ${stringResource(R.string.file_name_generic)}
                                 ${mediaItemDetails.fileName ?: stringResource(id = R.string.not_found_generic)}
                                 
@@ -83,20 +85,24 @@ fun MediaInfoDialog(
                                 ${stringResource(R.string.last_modified_on)}
                                 ${mediaItemDetails.dateModified ?: stringResource(id = R.string.not_found_generic)}                        
                                 """.trimIndent(),
-                            )
-                        }
-
-                        TextButton(
-                            onClick = onFinish,
-                            modifier = Modifier
-                                .align(alignment = Alignment.End)
-                        ) {
-                            Text(text = "OK")
-                        }
-
-
+                        )
 
                     }
+
+                    TextButton(
+                        onClick = onFinish,
+                        modifier = Modifier
+                            .align(alignment = Alignment.End)
+                            .padding(
+                                end = 12.dp,
+                            )
+                    ) {
+                        Text(
+                            text = "OK",
+                            color = colorResource(R.color.system_accent1_100)
+                        )
+                    }
+
                 }
             }
         )
