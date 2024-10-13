@@ -159,14 +159,14 @@
 
         <activity
             android:name=".ui.activities.VideoPlayer"
-            android:theme="@style/OverlayActionBar"
+            android:theme="@style/Theme.Design.NoActionBar"
             android:taskAffinity=".ui.activities.VideoPlayer"
             android:excludeFromRecents="true"
             android:exported="false"/>
 
         <activity
             android:name=".ui.activities.InAppGallery"
-            android:theme="@style/OverlayActionBar"
+            android:theme="@style/Theme.Design.NoActionBar"
             android:taskAffinity=".ui.activities.InAppGallery"
             android:excludeFromRecents="true"
             android:exported="false"/>
