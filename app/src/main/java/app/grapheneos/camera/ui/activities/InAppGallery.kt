@@ -79,7 +79,7 @@ class InAppGallery : AppCompatActivity() {
 
         setContent {
             CameraApp(
-                initialRoute = GalleryRoute,
+                initialRoute = GalleryRoute(),
                 onExitAction = this::finish,
             )
         }
