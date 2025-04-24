@@ -111,6 +111,8 @@ class CamConfig(private val mActivity: MainActivity) {
 
             const val ENABLE_ZSL = "enable_zsl"
 
+            const val LOW_LIGHT_BOOST = "low_light_boost"
+
             // const val IMAGE_FILE_FORMAT = "image_quality"
             // const val VIDEO_FILE_FORMAT = "video_quality"
         }
@@ -155,6 +157,8 @@ class CamConfig(private val mActivity: MainActivity) {
             const val CAMERA_SOUNDS = true
 
             const val ENABLE_ZSL = false
+
+            const val LOW_LIGHT_BOOST = true
 
             // const val IMAGE_FILE_FORMAT = ""
             // const val VIDEO_FILE_FORMAT = ""
@@ -552,6 +556,19 @@ class CamConfig(private val mActivity: MainActivity) {
                 SettingValues.Key.GYROSCOPE_SUGGESTIONS,
                 value
             )
+            editor.apply()
+        }
+
+    var lowLightBoost: Boolean
+        get() {
+            return commonPref.getBoolean(
+                SettingValues.Key.LOW_LIGHT_BOOST,
+                SettingValues.Default.LOW_LIGHT_BOOST
+            )
+        }
+        set(value) {
+            val editor = commonPref.edit()
+            editor.putBoolean(SettingValues.Key.LOW_LIGHT_BOOST, value)
             editor.apply()
         }
 
