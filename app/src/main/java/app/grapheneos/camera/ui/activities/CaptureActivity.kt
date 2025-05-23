@@ -32,6 +32,9 @@ open class CaptureActivity : MainActivity() {
     private lateinit var retakeIcon: ImageView
 
     private lateinit var flipCameraContent: ImageView
+
+    protected var isPreviewShown = false
+
     lateinit var confirmButton: ImageButton
 
     fun isOutputUriAvailable(): Boolean {
@@ -151,6 +154,8 @@ open class CaptureActivity : MainActivity() {
 
     open fun showPreview() {
 
+        isPreviewShown = true
+
         camConfig.cameraProvider?.unbindAll()
 
         mainOverlay.setImageBitmap(bitmap)
@@ -168,6 +173,9 @@ open class CaptureActivity : MainActivity() {
     }
 
     open fun hidePreview() {
+
+        isPreviewShown = false
+
         camConfig.startCamera(true)
 
         settingsIcon.visibility = View.VISIBLE
