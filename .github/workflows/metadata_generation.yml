@@ -1,0 +1,23 @@
+name: Load metadata
+
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          cache: gradle
+      - name: Build with Gradle
+        run: ./gradlew --write-verification-metadata sha512 --no-daemon
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-metadata.xml
+          path: verification-metadata.xml
